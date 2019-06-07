@@ -34,16 +34,16 @@ branches:
   - /v(\d+)?\.(\d+)\.(\d+)/
 after_success:
   - if [ $TRAVIS_PYTHON_VERSION = "3.6" ] && [ $AWKWARD = "awkward>=0.8.4" ]; 
-    then 
-      codecov 
-      pip install -U sphinx nbsphinx sphinx-rtd-theme
-      pushd docs
-      pushd source
-      sphinx-autogen reference.rst
-      popd
-      make html
-      popd
-    fi
+  - then 
+  - codecov 
+  - pip install -U sphinx nbsphinx sphinx-rtd-theme
+  - pushd docs
+  - pushd source
+  - sphinx-autogen reference.rst
+  - popd
+  - make html
+  - popd
+  - fi
 deploy:
   - provider: pages
     skip_cleanup: true
