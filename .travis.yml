@@ -21,8 +21,7 @@ install:
 - pip install codecov
 - PY_MAJ=`python -c 'import sys; print(sys.version_info[0])'`
 - PY_MIN=`python -c 'import sys; print(sys.version_info[1])'`
-- if [ $PY_MAJ -eq 3 ]; then pip install pandas pyarrow cloudpickle lz4 jinja2 parsl;
-  fi
+- if [ $PY_MAJ -eq 3 ]; then pip install pandas pyarrow cloudpickle lz4 jinja2 parsl; fi
 - if [ $PY_MAJ -eq 3 ] && [ $PY_MIN -eq 6 ]; then  pip install pyspark; fi
 - pip install ${AWKWARD}
 - pip install scipy
@@ -34,8 +33,25 @@ branches:
   - master
   - /v(\d+)?\.(\d+)\.(\d+)/
 after_success:
-  - if [ $TRAVIS_PYTHON_VERSION = "3.6" ] && [ $AWKWARD = "awkward>=0.8.4" ]; then codecov; fi
+  - if [ $TRAVIS_PYTHON_VERSION = "3.6" ] && [ $AWKWARD = "awkward>=0.8.4" ]; 
+    then 
+      codecov 
+      pip install -U sphinx nbsphinx sphinx-rtd-theme
+      pushd docs
+      pushd source
+      sphinx-autogen reference.rst
+      popd
+      make html
+      popd
+    fi
 deploy:
+  - provider: pages
+    skip_cleanup: true
+    github_token: $GITHUB_OAUTH_TOKEN
+    local_dir: docs/build/html
+    on:
+      branch: master
+      condition: $TRAVIS_PYTHON_VERSION = "3.6" && $AWKWARD = "awkward>=0.8.4"
   - provider: releases
     user: lgray
     api_key: $GITHUB_OAUTH_TOKEN
